@@ -1,4 +1,4 @@
-import { countAliveNeighbours } from "./index";
+import { countAliveNeighbors, getInitialState } from "./index";
 
 const getMockGrid = (param) => {
   let mockGrid = [
@@ -6,7 +6,7 @@ const getMockGrid = (param) => {
     [false, false, false, false, false],
     [false, false, false, false, false],
     [false, false, false, false, false],
-    [false, false, false, false, false]
+    [false, false, false, false, false],
   ];
 
   if (param) {
@@ -16,19 +16,19 @@ const getMockGrid = (param) => {
 
   return mockGrid;
 };
-describe("countAliveNeighbours", () => {
+describe("countAliveNeighbors", () => {
   describe("normal case", () => {
     const indexColumn = 2;
     const indexLine = 2;
     const baseParam = {
       indexColumn,
-      indexLine
+      indexLine,
     };
-    it("returns 0 when no alive neighbour", () => {
+    it("returns 0 when no alive neighbor", () => {
       expect(
-        countAliveNeighbours({
+        countAliveNeighbors({
           state: getMockGrid(),
-          ...baseParam
+          ...baseParam,
         })
       ).toBe(0);
     });
@@ -44,14 +44,14 @@ describe("countAliveNeighbours", () => {
       ${3}      | ${2}        | ${"bottom"}
       ${3}      | ${3}        | ${"right bottom"}
     `(
-      "returns 1 when $position is alive neighbour",
+      "returns 1 when $position is alive neighbor",
       ({ indexLine, indexColumn }) => {
         let mockLocalGrid = getMockGrid([indexLine, indexColumn]);
 
         expect(
-          countAliveNeighbours({
+          countAliveNeighbors({
             state: mockLocalGrid,
-            ...baseParam
+            ...baseParam,
           })
         ).toBe(1);
       }
@@ -66,15 +66,15 @@ describe("countAliveNeighbours", () => {
       ${3}          | ${3}            | ${"right bottom"} | ${4}      | ${4}
       ${3}          | ${1}            | ${"left bottom"}  | ${4}      | ${0}
     `(
-      "returns 1 when $position is alive neighbour",
+      "returns 1 when $position is alive neighbor",
       ({ indexLine, indexColumn, indexColumnMock, indexLineMock }) => {
         let mockLocalGrid = getMockGrid([indexLineMock, indexColumnMock]);
 
         expect(
-          countAliveNeighbours({
+          countAliveNeighbors({
             state: mockLocalGrid,
             indexLine,
-            indexColumn
+            indexColumn,
           })
         ).toBe(1);
       }
@@ -89,18 +89,37 @@ describe("countAliveNeighbours", () => {
       ${3}          | ${2}            | ${"right bottom side"} | ${4}      | ${2}
       ${2}          | ${1}            | ${"left side"}         | ${2}      | ${0}
     `(
-      "returns 1 when $position is alive neighbour",
+      "returns 1 when $position is alive neighbor",
       ({ indexLine, indexColumn, indexColumnMock, indexLineMock }) => {
         let mockLocalGrid = getMockGrid([indexLineMock, indexColumnMock]);
 
         expect(
-          countAliveNeighbours({
+          countAliveNeighbors({
             state: mockLocalGrid,
             indexLine,
-            indexColumn
+            indexColumn,
           })
         ).toBe(1);
       }
     );
+  });
+
+  describe("getInitialState", () => {
+    it("returns initial state", () => {
+      const mockGrid = getMockGrid();
+      mockGrid[2][1] = true;
+      mockGrid[2][2] = true;
+      mockGrid[2][3] = true;
+
+      expect(
+        getInitialState({
+          dimension: {
+            width: 100,
+            height: 100,
+          },
+          cellSize: 20,
+        })
+      ).toEqual(mockGrid);
+    });
   });
 });
